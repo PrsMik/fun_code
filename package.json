@@ -1,0 +1,32 @@
+{
+    "name": "funlang",
+    "displayName": "FunLang",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "funlang",
+                "extensions": [
+                    ".fun"
+                ]
+            }
+        ],
+        "grammars": [
+            {
+                "language": "funlang",
+                "scopeName": "source.funlang",
+                "path": "./syntaxes/funlang.tmLanguage.json"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:funlang"
+    ],
+    "main": "./client.js",
+    "dependencies": {
+        "vscode-languageclient": "^9.0.1"
+    }
+}
