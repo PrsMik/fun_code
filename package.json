@@ -11,7 +11,8 @@
                 "id": "funlang",
                 "extensions": [
                     ".fun"
-                ]
+                ],
+                "configuration": "./language-configuration.json"
             }
         ],
         "grammars": [
