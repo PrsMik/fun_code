@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const net = require('net');
 const { LanguageClient } = require('vscode-languageclient/node');
 
 let client;
@@ -8,9 +9,20 @@ function activate(context) {
 
     const serverCommand = 'D:\\Repo\\funlang\\fun.exe';
 
-    const serverOptions = {
-        run: { command: serverCommand, args: ['lsp'] },
-        debug: { command: serverCommand, args: ['lsp'] }
+    // const serverOptions = {
+    //     run: { command: serverCommand, args: ['lsp'] },
+    //     debug: { command: serverCommand, args: ['lsp'] }
+    // };
+
+    const serverOptions = () => {
+        return new Promise((resolve) => {
+            const client = net.connect({ port: 5007 }, () => {
+                resolve({
+                    reader: client,
+                    writer: client
+                });
+            });
+        });
     };
 
     const clientOptions = {

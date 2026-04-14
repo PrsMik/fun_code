@@ -15,6 +15,11 @@
                 "configuration": "./language-configuration.json"
             }
         ],
+        "configurationDefaults": {
+            "[funlang]": {
+                "editor.semanticHighlighting.enabled": true
+            }
+        },
         "grammars": [
             {
                 "language": "funlang",

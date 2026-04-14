@@ -3,6 +3,9 @@
     "name": "FunLang",
     "patterns": [
         {
+            "include": "#comments"
+        },
+        {
             "include": "#keywords"
         },
         {
@@ -22,6 +25,20 @@
         }
     ],
     "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.double-slash.funlang",
+                    "begin": "//",
+                    "end": "$",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.funlang"
+                        }
+                    }
+                }
+            ]
+        },
         "keywords": {
             "patterns": [
                 {
