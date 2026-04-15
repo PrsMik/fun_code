@@ -12,7 +12,11 @@
                 "extensions": [
                     ".fun"
                 ],
-                "configuration": "./language-configuration.json"
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "./images/icon.png",
+                    "dark": "./images/icon.png"
+                }
             }
         ],
         "configurationDefaults": {
@@ -25,6 +29,26 @@
                 "language": "funlang",
                 "scopeName": "source.funlang",
                 "path": "./syntaxes/funlang.tmLanguage.json"
+            }
+        ],
+        "configuration": {
+            "title": "FunLang",
+            "properties": {
+                "funlang.serverPath": {
+                    "type": "string",
+                    "default": "fun",
+                    "description": "Path to binary (.exe) of funlang interpreter."
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "funlang.setServerPath",
+                "title": "FunLang: Set Interpreter Path"
+            },
+            {
+                "command": "funlang.restartServer",
+                "title": "FunLang: Restart Language Server"
             }
         ]
     },
