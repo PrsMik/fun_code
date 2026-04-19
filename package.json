@@ -1,7 +1,14 @@
 {
     "name": "funlang",
     "displayName": "FunLang",
+    "publisher": "REDIO",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/PrsMik/fun_code.git"
+    },
+    "description": "Language support for FunLang programming language",
     "version": "0.1.0",
+    "license": "MIT",
     "engines": {
         "vscode": "^1.75.0"
     },
