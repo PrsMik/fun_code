@@ -1,7 +1,10 @@
 const vscode = require('vscode');
 const { LanguageClient } = require('vscode-languageclient/node');
+const net = require('net');
+const child_process = require('child_process');
 
 let client;
+let serverProcess;
 
 async function setServerPath() {
     const fileUri = await vscode.window.showOpenDialog({
@@ -24,22 +27,38 @@ async function setServerPath() {
 async function startServer() {
     const config = vscode.workspace.getConfiguration('funlang');
     const serverPath = config.get('serverPath') || 'fun';
+    const serverPortStr = config.get('serverPort') || '127.0.0.1:5007';
+
+    const [host, port] = serverPortStr.split(':');
 
     console.log(`Starting FunLang LSP using path: ${serverPath}`);
 
-    const serverOptions = {
-        run: { command: serverPath, args: ['lsp', "--mode", "stdio"] },
-        debug: { command: serverPath, args: ['lsp', "--mode", "stdio"] }
-    };
+    const serverOptions = () => {
+        return new Promise((resolve, reject) => {
+            serverProcess = child_process.spawn(serverPath, [
+                'lsp',
+                '--mode', 'tcp',
+                '--port', serverPortStr
+            ]);
 
-    // const serverOptions = () => {
-    //     const net = require('net');
-    //     return new Promise((resolve) => {
-    //         const socket = net.connect({ port: 5007 }, () => {
-    //             resolve({ reader: socket, writer: socket });
-    //         });
-    //     });
-    // };
+            serverProcess.stderr.on('data', (data) => {
+                console.error(`LSP Server Error: ${data}`);
+            });
+
+            setTimeout(() => {
+                const socket = net.connect({ host: host, port: parseInt(port) }, () => {
+                    resolve({
+                        reader: socket,
+                        writer: socket
+                    });
+                });
+
+                socket.on('error', (err) => {
+                    reject(err);
+                });
+            }, 500);
+        });
+    };
 
     const clientOptions = {
         documentSelector: [{ scheme: 'file', language: 'funlang' }],
@@ -63,14 +82,6 @@ async function startServer() {
     }
 }
 
-async function restartServer() {
-    if (client) {
-        vscode.window.showInformationMessage('Restarting FunLang LSP Server...');
-        await client.stop();
-        client = undefined;
-    }
-    await startServer();
-}
 
 function activate(context) {
     console.log('Activating FunLang LSP...');
@@ -86,7 +97,7 @@ function activate(context) {
     context.subscriptions.push(setPathCommand, restartCommand);
 
     const configListener = vscode.workspace.onDidChangeConfiguration(e => {
-        if (e.affectsConfiguration('funlang.serverPath')) {
+        if (e.affectsConfiguration('funlang.serverPath') || e.affectsConfiguration('funlang.serverPort')) {
             vscode.window.showInformationMessage(
                 'FunLang LSP configuration changed. Restart server?',
                 'Yes', 'Later'
@@ -101,12 +112,23 @@ function activate(context) {
     startServer();
 }
 
+async function restartServer() {
+    if (client) {
+        vscode.window.showInformationMessage('Restarting FunLang LSP Server...');
+        await client.stop();
+        client = undefined;
+    }
+
+    if (serverProcess) {
+        serverProcess.kill();
+        serverProcess = undefined;
+    }
+    await startServer();
+}
 
 function deactivate() {
-    if (!client) {
-        return undefined;
-    }
-    return client.stop();
+    if (serverProcess) serverProcess.kill();
+    return client ? client.stop() : undefined;
 }
 
 module.exports = {

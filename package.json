@@ -38,6 +38,11 @@
                     "type": "string",
                     "default": "fun",
                     "description": "Path to binary (.exe) of funlang interpreter."
+                },
+                "funlang.serverPort": {
+                    "type": "string",
+                    "default": "127.0.0.1:5007",
+                    "description": "Addres and port to start up LSP server."
                 }
             }
         },
